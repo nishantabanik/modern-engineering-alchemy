@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nisha-deploy
+  name: nisha-deploy
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: nisha-deploy
+  template:
+    metadata:
+      labels:
+        app: nisha-deploy
+    spec:
+      containers:
+        - image: httpd:alpine3.18
+          name: httpd
+          resources: {}
+  strategy:
+    type: Recreate
