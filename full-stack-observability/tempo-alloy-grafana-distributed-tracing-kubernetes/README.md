@@ -90,7 +90,7 @@ kubectl port-forward svc/monitoring-grafana -n monitoring 3000:80
 - Click on any Trace ID to see the detailed trace view
 - Use the Service Graph view for dependency visualization
 - Access the pre-built traces dashboard at:
-  http://127.0.0.1:3000/a/grafana-exploretracesapp
+  http://127.0.0.1:3000/a/grafana-exploretraces-app
 
 ## Validation
 
