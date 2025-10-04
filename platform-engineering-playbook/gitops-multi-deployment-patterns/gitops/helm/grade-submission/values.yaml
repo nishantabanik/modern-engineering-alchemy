@@ -1,4 +1,4 @@
-replicaCount: 10
+replicaCount: 2
 
 image:
   repository: emergingtechnologies2016/kubernetes-course-grade-submission-api
