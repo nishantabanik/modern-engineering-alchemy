@@ -1,0 +1,19 @@
+replicaCount: 2
+
+image:
+  repository: emergingtechnologies2016/kubernetes-course-grade-submission-api
+  tag: stateless
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3000
+  targetPort: 3000
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 250m
+    memory: 128Mi

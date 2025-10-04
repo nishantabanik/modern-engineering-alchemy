@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grade-submission-helm
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/nishantabanik/modern-engineering-alchemy.git
+    targetRevision: HEAD
+    path: platform-engineering-playbook/gitops-multi-deployment-patterns/gitops/helm/grade-submission
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: grade-helm-demo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
