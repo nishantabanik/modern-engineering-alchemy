@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/nishantabanik/modern-engineering-alchemy.git
     targetRevision: HEAD
-    path: platform-engineering-playbook/gitops-multi-deployment-patterns/kustomize/overlays/dev
+    path: platform-engineering-playbook/gitops-multi-deployment-patterns/gitops/kustomize/overlays/dev
   destination:
     server: https://kubernetes.default.svc
     namespace: grade-demo
