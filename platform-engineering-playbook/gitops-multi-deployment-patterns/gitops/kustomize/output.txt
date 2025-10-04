@@ -1,0 +1,119 @@
+
+
+-----------------------------
+base/grade-submission-api-deployment.yaml
+-----------------------------
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grade-submission-api
+  namespace: grade-demo
+  labels:
+    app: grade-submission
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: grade-submission
+  template:
+    metadata:
+      labels:
+        app: grade-submission
+    spec:
+      containers:
+      - name: grade-submission-api
+        image: emergingtechnologies2016/kubernetes-course-grade-submission-api:stateless
+        ports:
+          - containerPort: 3000
+
+
+-----------------------------
+base/grade-submission-api-service.yaml
+-----------------------------
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: grade-submission-api
+  namespace: grade-demo
+spec:
+  type: NodePort
+  selector:
+    app: grade-submission
+  ports:
+  - port: 3000
+    targetPort: 3000
+
+-----------------------------
+base/kustomization.yaml
+-----------------------------
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - grade-submission-api-deployment.yaml
+  - grade-submission-api-service.yaml
+
+-----------------------------
+overlays/dev/kustomization.yaml
+-----------------------------
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+namePrefix: dev-
+nameSuffix: ""
+
+patches:
+  - path: replicas-patch.yaml
+    target:
+      kind: Deployment
+      name: grade-submission-api
+
+-----------------------------
+overlays/dev/replicas-patch.yaml
+-----------------------------
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grade-submission-api
+  namespace: grade-demo 
+spec:
+  replicas: 1
+
+-----------------------------
+overlays/prod/kustomization.yaml
+-----------------------------
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+namePrefix: prod-
+nameSuffix: ""
+
+patches:
+  - path: replicas-patch.yaml
+    target:
+      kind: Deployment
+      name: grade-submission-api
+
+-----------------------------
+overlays/prod/replicas-patch.yaml
+-----------------------------
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grade-submission-api
+  namespace: grade-demo 
+spec:
+  replicas: 3
