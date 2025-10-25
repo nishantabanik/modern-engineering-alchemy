@@ -23,6 +23,11 @@ jobs:
         id: 'git-checkout'
         uses: "actions/checkout@v4"
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.5
+
       - name: Terraform Init
         id: 'tf-init'
         env:
