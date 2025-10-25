@@ -1,0 +1,65 @@
+# This Pipeline will manage CloudRun deployment via Terraform
+
+name: 'CICD tf-actions'
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'tf-actions'
+    paths:
+      - 'platform-cicd-blueprints/cicd-gh-actions/tf-actions/**'
+
+concurrency: ${{ github.repository }}
+
+jobs:
+  gcp_cicd:
+    name: 'GCP CICD Job'
+    runs-on: 'ubuntu-latest'
+
+    steps:
+
+      - name: GIT Checkout
+        id: 'git-checkout'
+        uses: "actions/checkout@v4"
+
+      - name: Terraform Init
+        id: 'tf-init'
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.ACTIONS_KEY }}
+        run: |
+          cd platform-cicd-blueprints/cicd-gh-actions/tf-actions
+          terraform init
+          pwd
+
+      - name: Terraform Plan
+        id: 'tf-plan'
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.ACTIONS_KEY }}
+        run: |
+          cd platform-cicd-blueprints/cicd-gh-actions/tf-actions
+          terraform plan
+
+      - name: Terraform Apply
+        id: 'tf-apply'
+        if: |
+          github.ref == 'refs/heads/main'
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.ACTIONS_KEY }}
+        run: |
+          cd platform-cicd-blueprints/cicd-gh-actions/tf-actions
+          terraform apply --auto-approve
+
+      - name: Upload File
+        id: 'python-upload'
+        if: |
+          github.ref == 'refs/heads/main'
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.ACTIONS_KEY }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/cred.json
+        run: |
+          cd platform-cicd-blueprints/cicd-gh-actions/tf-actions
+          echo -n "$GOOGLE_CREDENTIALS" > $GOOGLE_APPLICATION_CREDENTIALS
+          pip install gcloud
+          python gcsUpoad.py
+          rm $GOOGLE_APPLICATION_CREDENTIALS
