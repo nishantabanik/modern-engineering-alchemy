@@ -5,7 +5,7 @@ from google.cloud import (
     bigquery, storage, aiplatform_v1,
     monitoring_v3, secretmanager_v1, asset_v1
 )
-#from googleapiclient import discovery
+from googleapiclient import discovery
 from googleapiclient.discovery import build
 
 from google.cloud import asset_v1
@@ -19,7 +19,7 @@ def cai_assets():
     print("\n=== Cloud Asset Inventory scan ===")
     for asset in client.list_assets(request={"parent": SCOPE, "content_type": asset_v1.ContentType.RESOURCE}):
         if asset.asset_type not in ALLOWED:
-            print(f"⚠️  {asset.asset_type} → {asset.name}")
+            print(f"{asset.asset_type} → {asset.name}")
 
 def compute_vms():
     print("\n=== Compute VMs ===")
