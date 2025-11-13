@@ -6,7 +6,6 @@
 # Terraform lock files
 *.tfstate
 *.tfstate.*
-*.tfvars
 *.tfvars.json
 
 # Crash logs
