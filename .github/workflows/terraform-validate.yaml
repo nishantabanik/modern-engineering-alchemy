@@ -1,0 +1,40 @@
+name: Terraform Validate
+
+on:
+  pull_request:
+    # Only run when Terraform files change — keeps the monorepo scoped.
+    paths:
+      - 'enterprise-tfe-orchestrator/**'
+      - '.github/workflows/terraform-validate.yaml'
+
+concurrency:
+  group: terraform-validate-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: 'Validate Terraform'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: enterprise-tfe-orchestrator/platform-foundation
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.13.5
+          terraform_wrapper: false
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive -diff
+
+      - name: Terraform Init (no backend)
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        run: terraform validate
