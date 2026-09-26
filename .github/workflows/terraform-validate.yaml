@@ -18,7 +18,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: enterprise-tfe-orchestrator/gcp
+        working-directory: enterprise-tfe-orchestrator/platform-foundation
 
     steps:
       - name: Checkout
