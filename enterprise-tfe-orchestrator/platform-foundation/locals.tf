@@ -8,9 +8,12 @@ locals {
     component   = "platform-foundation"
   }
 
-  private_subnet_cidr             = "10.10.0.0/24"
-  artifact_registry_repository_id = "${local.name_prefix}-docker"
-  artifact_bucket_name            = "${var.project_id}-${local.name_prefix}-artifacts"
+  private_subnet_cidr                = "10.10.0.0/24"
+  vpc_flow_logs_aggregation_interval = "INTERVAL_10_MIN"
+  vpc_flow_logs_sampling             = 1.0
+  vpc_flow_logs_metadata             = "INCLUDE_ALL_METADATA"
+  artifact_registry_repository_id    = "${local.name_prefix}-docker"
+  artifact_bucket_name               = "${var.project_id}-${local.name_prefix}-artifacts"
 
   required_apis = toset([
     "artifactregistry.googleapis.com",

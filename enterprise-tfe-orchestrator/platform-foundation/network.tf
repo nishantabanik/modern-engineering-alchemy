@@ -18,5 +18,13 @@ resource "google_compute_subnetwork" "platform_private" {
   network                  = google_compute_network.platform.id
   private_ip_google_access = true
 
+  # Required by the GCP organization policy for new subnets.
+  # A 100% sampling rate satisfies ESSENTIAL, LIGHT, and COMPREHENSIVE policies.
+  log_config {
+    aggregation_interval = local.vpc_flow_logs_aggregation_interval
+    flow_sampling        = local.vpc_flow_logs_sampling
+    metadata             = local.vpc_flow_logs_metadata
+  }
+
   depends_on = [google_project_service.required["compute.googleapis.com"]]
 }
