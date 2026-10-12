@@ -18,6 +18,16 @@ resource "google_compute_subnetwork" "platform_private" {
   network                  = google_compute_network.platform.id
   private_ip_google_access = true
 
+  secondary_ip_range {
+    range_name    = local.pods_range_name
+    ip_cidr_range = local.pods_secondary_cidr
+  }
+
+  secondary_ip_range {
+    range_name    = local.services_range_name
+    ip_cidr_range = local.services_secondary_cidr
+  }
+
   # Required by the GCP organization policy for new subnets.
   # A 100% sampling rate satisfies ESSENTIAL, LIGHT, and COMPREHENSIVE policies.
   log_config {

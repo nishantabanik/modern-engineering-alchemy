@@ -9,6 +9,10 @@ locals {
   }
 
   private_subnet_cidr                = "10.10.0.0/24"
+  pods_secondary_cidr                = "172.16.0.0/20"
+  services_secondary_cidr            = "172.20.0.0/24"
+  pods_range_name                    = "k8s-pods"
+  services_range_name                = "k8s-services"
   vpc_flow_logs_aggregation_interval = "INTERVAL_10_MIN"
   vpc_flow_logs_sampling             = 1.0
   vpc_flow_logs_metadata             = "INCLUDE_ALL_METADATA"
