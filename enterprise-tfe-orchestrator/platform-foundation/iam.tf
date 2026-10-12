@@ -7,7 +7,7 @@
 # Connects Kubernetes 'external-secrets/external-secrets' to GCP Secret Manager
 module "workload_identity_eso" {
   source  = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version = "~> 33.0"
+  version = "~> 43.0"
 
   project_id          = var.project_id
   name                = "external-secret-operator"
@@ -24,7 +24,7 @@ module "workload_identity_eso" {
 # Connects Kubernetes 'flux-system/image-reflector-controller' to Google Artifact Registry
 module "workload_identity_flux" {
   source  = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version = "~> 33.0"
+  version = "~> 43.0"
 
   project_id          = var.project_id
   name                = "flux-image-reflector"
