@@ -1,31 +1,21 @@
 # ---------------------------------------------------------------------------
-# Cloud Router and Cloud NAT
-# Required for private GKE nodes to access external registries, GitHub,
-# Helm repositories, and external APIs without needing public IP addresses.
+# Cloud NAT using official Google Cloud NAT Module
+# https://registry.terraform.io/modules/terraform-google-modules/cloud-nat/google
 # ---------------------------------------------------------------------------
 
-resource "google_compute_router" "router" {
-  project = var.project_id
-  name    = "${local.name_prefix}-router"
-  network = google_compute_network.platform.id
-  region  = var.gcp_region
+module "cloud_nat" {
+  source  = "terraform-google-modules/cloud-nat/google"
+  version = "~> 5.2"
 
-  depends_on = [google_project_service.required["compute.googleapis.com"]]
-}
+  project_id    = var.project_id
+  region        = var.gcp_region
+  router        = "${local.name_prefix}-router"
+  network       = module.vpc.network_name
+  create_router = true
+  name          = "${local.name_prefix}-nat"
 
-resource "google_compute_router_nat" "nat" {
-  project = var.project_id
-  name    = "${local.name_prefix}-nat"
-  router  = google_compute_router.router.name
-  region  = var.gcp_region
+  log_config_enable = true
+  log_config_filter = "ERRORS_ONLY"
 
-  nat_ip_allocate_option             = "AUTO_ONLY"
-  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
-
-  log_config {
-    enable = true
-    filter = "ERRORS_ONLY"
-  }
-
-  depends_on = [google_compute_router.router]
+  depends_on = [module.vpc]
 }

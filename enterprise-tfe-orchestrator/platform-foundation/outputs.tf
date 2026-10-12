@@ -5,12 +5,12 @@ output "enabled_apis" {
 
 output "vpc_name" {
   description = "Name of the platform VPC."
-  value       = google_compute_network.platform.name
+  value       = module.vpc.network_name
 }
 
 output "private_subnet_name" {
   description = "Name of the platform private subnet."
-  value       = google_compute_subnetwork.platform_private.name
+  value       = module.vpc.subnets_names[0]
 }
 
 output "artifact_registry_repository" {
@@ -25,16 +25,26 @@ output "artifact_bucket_name" {
 
 output "gke_cluster_name" {
   description = "Name of the provisioned GKE cluster."
-  value       = google_container_cluster.platform_cluster.name
+  value       = module.gke.name
 }
 
 output "gke_cluster_endpoint" {
   description = "API endpoint of the GKE cluster."
-  value       = google_container_cluster.platform_cluster.endpoint
+  value       = module.gke.endpoint
+  sensitive   = true
 }
 
 output "gke_connect_command" {
   description = "Run this command on your Mac to connect kubectl directly to your cluster."
-  value       = "gcloud container clusters get-credentials ${google_container_cluster.platform_cluster.name} --region ${var.gcp_region} --project ${var.project_id}"
+  value       = "gcloud container clusters get-credentials ${module.gke.name} --region ${var.gcp_region} --project ${var.project_id}"
 }
 
+output "eso_service_account_email" {
+  description = "GCP Service Account for External Secrets Operator Workload Identity."
+  value       = module.workload_identity_eso.gcp_service_account_email
+}
+
+output "flux_image_reflector_email" {
+  description = "GCP Service Account for Flux Image Reflector Workload Identity."
+  value       = module.workload_identity_flux.gcp_service_account_email
+}

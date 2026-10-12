@@ -1,39 +1,40 @@
-# Custom-mode VPC: subnet ranges are declared explicitly rather than created automatically.
-resource "google_compute_network" "platform" {
-  project = var.project_id
-  name    = "${local.name_prefix}-vpc"
+# ---------------------------------------------------------------------------
+# VPC Network & Subnets using official Google Cloud Network Module
+# https://registry.terraform.io/modules/terraform-google-modules/network/google
+# ---------------------------------------------------------------------------
 
-  auto_create_subnetworks = false
-  routing_mode            = "GLOBAL"
+module "vpc" {
+  source  = "terraform-google-modules/network/google"
+  version = "~> 9.1"
 
-  depends_on = [google_project_service.required["compute.googleapis.com"]]
-}
+  project_id   = var.project_id
+  network_name = "${local.name_prefix}-vpc"
+  routing_mode = "GLOBAL"
 
-resource "google_compute_subnetwork" "platform_private" {
-  project = var.project_id
-  name    = "${local.name_prefix}-private-subnet"
-  region  = var.gcp_region
+  subnets = [
+    {
+      subnet_name               = "${local.name_prefix}-private-subnet"
+      subnet_ip                 = local.private_subnet_cidr
+      subnet_region             = var.gcp_region
+      subnet_private_access     = "true"
+      subnet_flow_logs          = "true"
+      subnet_flow_logs_interval = local.vpc_flow_logs_aggregation_interval
+      subnet_flow_logs_sampling = tostring(local.vpc_flow_logs_sampling)
+      subnet_flow_logs_metadata = local.vpc_flow_logs_metadata
+    }
+  ]
 
-  ip_cidr_range            = local.private_subnet_cidr
-  network                  = google_compute_network.platform.id
-  private_ip_google_access = true
-
-  secondary_ip_range {
-    range_name    = local.pods_range_name
-    ip_cidr_range = local.pods_secondary_cidr
-  }
-
-  secondary_ip_range {
-    range_name    = local.services_range_name
-    ip_cidr_range = local.services_secondary_cidr
-  }
-
-  # Required by the GCP organization policy for new subnets.
-  # A 100% sampling rate satisfies ESSENTIAL, LIGHT, and COMPREHENSIVE policies.
-  log_config {
-    aggregation_interval = local.vpc_flow_logs_aggregation_interval
-    flow_sampling        = local.vpc_flow_logs_sampling
-    metadata             = local.vpc_flow_logs_metadata
+  secondary_ranges = {
+    "${local.name_prefix}-private-subnet" = [
+      {
+        range_name    = local.pods_range_name
+        ip_cidr_range = local.pods_secondary_cidr
+      },
+      {
+        range_name    = local.services_range_name
+        ip_cidr_range = local.services_secondary_cidr
+      }
+    ]
   }
 
   depends_on = [google_project_service.required["compute.googleapis.com"]]
