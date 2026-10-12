@@ -9,11 +9,13 @@ module "workload_identity_eso" {
   source  = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   version = "~> 33.0"
 
-  project_id  = var.project_id
-  name        = "external-secret-operator"
-  namespace   = "external-secrets"
-  k8s_sa_name = "external-secrets"
-  roles       = ["roles/secretmanager.secretAccessor"]
+  project_id          = var.project_id
+  name                = "external-secret-operator"
+  namespace           = "external-secrets"
+  k8s_sa_name         = "external-secrets"
+  use_existing_k8s_sa = true
+  annotate_k8s_sa     = false
+  roles               = ["roles/secretmanager.secretAccessor"]
 
   depends_on = [module.gke]
 }
@@ -24,11 +26,13 @@ module "workload_identity_flux" {
   source  = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
   version = "~> 33.0"
 
-  project_id  = var.project_id
-  name        = "flux-image-reflector"
-  namespace   = "flux-system"
-  k8s_sa_name = "image-reflector-controller"
-  roles       = ["roles/artifactregistry.reader"]
+  project_id          = var.project_id
+  name                = "flux-image-reflector"
+  namespace           = "flux-system"
+  k8s_sa_name         = "image-reflector-controller"
+  use_existing_k8s_sa = true
+  annotate_k8s_sa     = false
+  roles               = ["roles/artifactregistry.reader"]
 
   depends_on = [module.gke]
 }

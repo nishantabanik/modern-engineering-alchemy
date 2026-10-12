@@ -27,9 +27,7 @@ module "gke" {
   enable_private_nodes    = true
   master_ipv4_cidr_block  = "172.24.0.0/28"
 
-  gateway_api_config = {
-    channel = "CHANNEL_STANDARD"
-  }
+  gateway_api_channel = "CHANNEL_STANDARD"
 
   deletion_protection      = false
   remove_default_node_pool = true
